@@ -907,12 +907,14 @@ body {
     margin-right: 0 !important;
 }
 ```
+```
 ---
 
-## **9. Koneksi**
+## ****9. Koneksi**
 
-/* File: koneksi/connection.php */
+**File:** `koneksi/connection.php`
 
+```php
 <?php
 $database_hostname = "localhost";
 $database_username = "root";
