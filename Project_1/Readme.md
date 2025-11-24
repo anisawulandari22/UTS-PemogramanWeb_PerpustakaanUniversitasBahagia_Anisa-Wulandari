@@ -908,7 +908,7 @@ body {
 ```
 ---
 
-## ****9. Koneksi**
+## **9. Koneksi**
 
 **File:** `koneksi/connection.php`
 
