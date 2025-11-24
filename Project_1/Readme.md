@@ -893,20 +893,18 @@ document.addEventListener('DOMContentLoaded', function() {
 ---
 
 ## **8. Style**
+**File:** `css/style.css`
 
-/* File: css/style.css */
-
-/* Mencegah scrollbar horizontal */
+```css
 body {
     overflow-x: hidden; 
 }
 
-/* Memperbaiki masalah margin negatif pada ROW */
 .row {
     margin-left: 0 !important;
     margin-right: 0 !important;
 }
-```
+
 ```
 ---
 
