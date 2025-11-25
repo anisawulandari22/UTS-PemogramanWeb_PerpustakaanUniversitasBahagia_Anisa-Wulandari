@@ -19,9 +19,9 @@
 <img width="1920" height="1080" alt="test_connection" src="https://github.com/user-attachments/assets/75a461d3-9570-405d-9e72-ff51098de885" />
 2. get_data
 <img width="1920" height="1080" alt="get_data" src="https://github.com/user-attachments/assets/df505c8f-1beb-4de2-8bcc-0504a06726b7" />
-3. update_data
-<img width="1920" height="1080" alt="update_data" src="https://github.com/user-attachments/assets/571b6484-4bfb-405a-afc6-bcf7365201c9" />
-4. insert_data
+3. insert_data
 <img width="1920" height="1080" alt="insert_data" src="https://github.com/user-attachments/assets/12d60982-a93e-458b-b92e-b3966244cdbc" />
+4. update_data
+<img width="1920" height="1080" alt="update_data" src="https://github.com/user-attachments/assets/571b6484-4bfb-405a-afc6-bcf7365201c9" />
 5. delete_data
 <img width="1920" height="1080" alt="delete_data" src="https://github.com/user-attachments/assets/9583965e-4d0c-4efb-bda8-4ceb79ee61d1" />
