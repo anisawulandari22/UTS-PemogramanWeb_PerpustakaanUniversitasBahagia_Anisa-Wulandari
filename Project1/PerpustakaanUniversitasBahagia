@@ -4,11 +4,11 @@
 
 ```
 Perpustakaan/
-├── index.html          
-├── detail.html         
-├── login.html          
-├── register.html       
-├── menu.html   
+├── index.php          
+├── detail.php         
+├── login.php        
+├── register.php       
+├── menu.php   
 ├── koneksi
 │   └── connection.php
 ├── css/
