@@ -12,7 +12,9 @@
 <img width="1920" height="1080" alt="menu_utama_katalog_buku" src="https://github.com/user-attachments/assets/3b947674-7acf-426e-a930-488d7f08fe23" />
 6. Detail Informasi Buku
 <img width="1920" height="1080" alt="detail_informasi" src="https://github.com/user-attachments/assets/179e4a8d-54f4-4a24-a121-b9a9625db945" />
+
 ## **Project 2 - CRUD API Bruno**
+
 1. test_connection
 <img width="1920" height="1080" alt="test_connection" src="https://github.com/user-attachments/assets/75a461d3-9570-405d-9e72-ff51098de885" />
 2. get_data
