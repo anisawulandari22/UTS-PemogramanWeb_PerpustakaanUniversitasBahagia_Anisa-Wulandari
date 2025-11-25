@@ -1,0 +1,221 @@
+# **CRUD API - Perpustakaan Universitas Bahagia**
+
+## **1. Struktur Folder Proyek**
+
+```
+Perpustakaan/              
+├── register.php        
+└── flow
+    └── get_data.php
+    └── update_data.php
+    └── delete_data.php
+```
+
+---
+
+## **2. register.php**
+
+**File:** `register.php`
+
+```php
+<?php
+include 'koneksi/connection.php';
+
+$success_message = "";
+$error_message = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $namaLengkap = $_POST['nama_lengkap'];
+    $nimMahasiswa = $_POST['nim_mahasiswa'];
+    $password = $_POST['password_reg'];
+
+    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+    // Cek apakah NIM sudah terdaftar
+    $stmt_check = $conn->prepare("SELECT NIM FROM users WHERE NIM = ?");
+    $stmt_check->execute([$nimMahasiswa]);
+    $nim_exist = $stmt_check->rowCount();
+
+    if ($nim_exist > 0) {
+        $error_message = "NIM/Username sudah terdaftar.";
+    } else {
+        // Masukkan data ke database
+        $stmt_insert = $conn->prepare("INSERT INTO users (Nama, NIM, Password) VALUES (?, ?, ?)");
+        
+        if ($stmt_insert->execute([$namaLengkap, $nimMahasiswa, $passwordHash])) {
+            $success_message = "Pendaftaran berhasil! Silakan login.";
+        } else {
+            $error_message = "Pendaftaran gagal: " . $stmt_insert->errorInfo()[2];
+        }
+    }
+}
+
+include 'includes/header.php'; // Pastikan path ini benar
+?>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg p-5">
+                <h3 class="card-title text-center mb-4">Daftar Anggota Baru</h3>
+                
+                <?php if ($success_message): ?>
+                    <div class="alert alert-success" role="alert"><?php echo $success_message; ?> <a href="login.php">Login di sini</a></div>
+                <?php endif; ?>
+                <?php if ($error_message): ?>
+                    <div class="alert alert-danger" role="alert"><?php echo $error_message; ?></div>
+                <?php endif; ?>
+
+                <form method="POST" action="register.php">
+                    <div class="mb-3">
+                        <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
+                        <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nim_mahasiswa" class="form-label">NIM Mahasiswa / Username</label>
+                        <input type="text" class="form-control" id="nim_mahasiswa" name="nim_mahasiswa" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password_reg" class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password_reg" name="password_reg" required>
+                            <button class="btn btn-outline-secondary" type="button" id="togglePasswordReg"> 
+                                <i class="fas fa-eye" id="eyeIconReg"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 mb-3">Daftar Sekarang</button>
+                </form>
+                <p class="text-center">Sudah punya akun? <a href="login.php">Login di sini</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php
+include 'includes/footer.php';
+?>
+
+<script>
+    document.getElementById('togglePasswordReg').addEventListener('click', function (e) {
+        const passwordField = document.getElementById('password_reg');
+        const icon = document.getElementById('eyeIconReg');
+        
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+    });
+</script>
+```
+
+---
+
+## **3. get_data.php**
+
+**File:** `flow/get_data.php`
+
+```php
+<?php
+include '../koneksi/connection.php';
+
+try{
+    $sql='SELECT * FROM users';
+    $connect = $conn->prepare($sql);
+    $connect->execute();
+
+    $data = array();
+    while($row = $connect->fetch(PDO::FETCH_ASSOC)){
+        array_push($data, $row);
+    }
+
+    echo json_encode($data);
+
+}catch (PDOException $e){
+    die("Tidak dapat memuat basis data $database_name: " . $e->getMessage());
+}
+
+?>
+```
+
+---
+
+## **4. update_data.php**
+
+**File:** `flow/update_data.php`
+
+```php
+<?php
+require_once '../koneksi/connection.php';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(["status" => "error", "message" => "Metode request harus POST."]);
+    exit();
+}
+
+try {
+    $data = $_POST;
+    if (empty($data)) {
+        $input = file_get_contents("php://input");
+        $data = json_decode($input, true);
+    }
+
+    // Memastikan keys dari Bruno lengkap (nama_lengkap, nim_mahasiswa, password_reg)
+    if (!isset($data['id']) || !isset($data['nama_lengkap']) || !isset($data['nim_mahasiswa']) || !isset($data['password_reg'])) {
+        http_response_code(400);
+        echo json_encode(["status" => "error", "message" => "Data tidak lengkap. Diperlukan id, nama_lengkap, nim_mahasiswa, dan password_reg."]);
+        exit();
+    }
+
+    $id = $data['id'];
+    $nama_lengkap = $data['nama_lengkap'];
+    $nim_mahasiswa = $data['nim_mahasiswa'];
+    
+    // Hashing password
+    $hashed_password = password_hash($data['password_reg'], PASSWORD_DEFAULT);
+
+    // SQL FINAL: Menggunakan nama kolom yang sesuai dengan database (Id, Nama, NIM, Password)
+    // Urutan: [Nama, NIM, Password, Id]
+    $sql = "UPDATE users SET Nama = ?, NIM = ?, Password = ? WHERE Id = ?";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$nama_lengkap, $nim_mahasiswa, $hashed_password, $id]);
+
+    http_response_code(200);
+    echo json_encode(["status" => "success", "message" => "Data ID $id berhasil diperbarui.", "rows_affected" => $stmt->rowCount()]);
+
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(["status" => "error", "message" => "Kesalahan Database: " . $e->getMessage()]);
+}
+?>
+```
+
+---
+
+## **5. delete_data.php**
+
+**File:** `flow/delete_data.php`
+
+```php
+<?php
+require_once '../koneksi/connection.php';
+
+$id = $_POST['id'];
+
+try {
+    $sql = "DELETE FROM `users` WHERE id = ?";
+    $qonnect = $conn->prepare($sql);
+    $qonnect->execute([$id]);
+
+    echo "Data deleted sussecfully!";
+
+}catch (PDOException $e) {
+    die ("Error deleting data: " . $err->getMessage());
+}
+?>
+```
+
+---
